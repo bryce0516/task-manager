@@ -7,17 +7,56 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.post("/users", (req, res) => {
+// promise
+// app.post("/users", (req, res) => {
+//   const user = new User(req.body);
+//   user
+//     .save()
+//     .then(() => {
+//       res.status(201).send(user);
+//     })
+//     .catch((error) => {
+//       console.log("user post has error", error);
+//       res.status(400).send(error);
+//     });
+// });
+
+app.post("/users", async (req, res) => {
   const user = new User(req.body);
-  user
-    .save()
-    .then(() => {
-      res.status(201).send(user);
-    })
-    .catch((error) => {
-      console.log("user post has error", error);
-      res.status(400).send(error);
+  try {
+    await user.save();
+    res.status(201).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+app.patch("/users/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["name", "email", "password", "age"];
+
+  const isValidOperation = updates.every((update) => {
+    return allowedUpdates.includes(update);
+  });
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid updates!" });
+  }
+
+  try {
+    console.log("passs here");
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
     });
+
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
 });
 
 app.get("/users", (req, res) => {
