@@ -34,8 +34,8 @@ const User = mongoose.model("User", {
 });
 
 const me = new User({
-  name: "Andrew",
-  email: "andrew@sdfsf.com",
+  name: "Mike",
+  email: "mike@naver.com",
   age: 27,
 });
 
