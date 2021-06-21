@@ -7,6 +7,15 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+const router = new express.Router();
+router.get("/test", (req, res) => {
+  res.send("this is from my other router");
+});
+
+const userRouter = require("./routers/user");
+app.use(router);
+app.use(userRouter);
+
 // promise
 // app.post("/users", (req, res) => {
 //   const user = new User(req.body);
@@ -20,72 +29,6 @@ app.use(express.json());
 //       res.status(400).send(error);
 //     });
 // });
-
-app.post("/users", async (req, res) => {
-  const user = new User(req.body);
-  try {
-    await user.save();
-    res.status(201).send(user);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-app.patch("/users/:id", async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
-
-  const isValidOperation = updates.every((update) => {
-    return allowedUpdates.includes(update);
-  });
-
-  if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
-  }
-
-  try {
-    console.log("passs here");
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
-  } catch (error) {
-    res.status(400).send(error);
-  }
-});
-
-app.get("/users", (req, res) => {
-  User.find({})
-    .then((users) => {
-      res.send(users);
-    })
-    .catch((error) => {
-      console.log("user get has error", error);
-      res.status(500).send(error);
-    });
-});
-
-app.get(`/users/:id`, (req, res) => {
-  const _id = req.params.id;
-
-  User.findById(_id)
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send();
-      }
-
-      res.send(user);
-    })
-    .catch((error) => {
-      res.status(500).send(error);
-    });
-  console.log(req.params);
-});
 
 app.post("/tasks", (req, res) => {
   const task = new Task(req.body);
@@ -125,7 +68,7 @@ app.get("/tasks/:id", (req, res) => {
     });
 });
 
-app.patch("/task/:id", (req, res) => {
+app.patch("/tasks/:id", (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["description", "completed"];
   const isValidOperation = updates.every((update) =>
@@ -147,17 +90,6 @@ app.patch("/task/:id", (req, res) => {
     res.send(task);
   } catch (error) {
     res.status(400).send(error);
-  }
-});
-
-app.delete("/users/:id", async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).send();
-    }
-  } catch (error) {
-    res.status(500).send(error);
   }
 });
 
