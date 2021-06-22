@@ -24,7 +24,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
 //     },
 //   },
 //   password: {
-//     type: String,
+//     type: String,s
 //     required: true,
 //     minlength: 7,
 //     trim: true,
@@ -83,3 +83,4 @@ mongoose.connect("mongodb://127.0.0.1:27017/task-manager-api", {
 //     console.log(task);
 //   })
 //   .catch((error) => console.log("error is ", error));
+
