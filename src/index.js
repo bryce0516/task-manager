@@ -5,6 +5,18 @@ const Task = require("./models/tasks");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// app.use((req, res, next) => {
+//   if (req.method === "GET") {
+//     res.send("GET requests are disable");
+//   } else {
+//     next();
+//   }
+//   console.log(req.method, req.path);
+//   // next();
+// });
+app.use((req, res, next) => {
+  res.status(503).send("Site is currently down, Check back Soon!");
+});
 app.use(express.json());
 
 const router = new express.Router();
@@ -18,6 +30,7 @@ const taskRouter = require("./routers/task");
 app.use(router);
 app.use(userRouter);
 app.use(taskRouter);
+
 // promise
 // app.post("/users", (req, res) => {
 //   const user = new User(req.body);
