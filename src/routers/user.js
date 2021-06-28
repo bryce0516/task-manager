@@ -25,7 +25,8 @@ router.post("/users/login", async (req, res) => {
     );
     const token = await user.generateAuthToken();
     console.log("this is jwt token", token);
-    res.send({ user, token: token });
+    // res.send({ user: user.getPublicProfile(), token: token });
+    res.send({ user, token });
   } catch (e) {
     console.log(e);
     res.status(400).send(e);
@@ -118,12 +119,25 @@ router.post("/users/logoutAll", auth, async (req, res) => {
     res.status(500).send(error);
   }
 });
-router.delete("/users/:id", async (req, res) => {
+// router.delete("/users/:id",auth,  async (req, res) => {
+//   try {
+//     const user = await User.findByIdAndDelete(req.params.id);
+//     if (!user) {
+//       return res.status(404).send();
+//     }
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// });
+
+router.delete("/users/me", auth, async (req, res) => {
   try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).send();
-    }
+    // const user = await User.findByIdAndDelete(req.user._id);
+    // if (!user) {
+    //   return res.status(404).send();
+    // }
+    await req.user.remove();
+    res.send(req.user);
   } catch (error) {
     res.status(500).send(error);
   }
