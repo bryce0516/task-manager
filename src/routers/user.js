@@ -108,6 +108,16 @@ router.post("/users/logout", auth, async (req, res) => {
   }
 });
 
+router.post("/users/logoutAll", auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    console.log("logoutall works");
+    res.send();
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 router.delete("/users/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
