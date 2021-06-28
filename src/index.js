@@ -14,9 +14,12 @@ const port = process.env.PORT || 3000;
 //   console.log(req.method, req.path);
 //   // next();
 // });
-app.use((req, res, next) => {
-  res.status(503).send("Site is currently down, Check back Soon!");
-});
+
+// block the web site
+// app.use((req, res, next) => {
+//   res.status(503).send("Site is currently down, Check back Soon!");
+// });
+
 app.use(express.json());
 
 const router = new express.Router();

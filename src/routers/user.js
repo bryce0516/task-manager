@@ -1,4 +1,5 @@
 const express = require("express");
+const auth = require("../middleware/auth");
 const router = new express.Router();
 const User = require("../models/users");
 router.get("/test", (req, res) => {
@@ -65,13 +66,13 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
-router.get("/users", (req, res) => {
+router.get("/users/me", auth, (req, res) => {
   User.find({})
     .then((users) => {
-      res.send(users);
+      res.status(200).send(req.user);
     })
     .catch((error) => {
-      console.log("user get has error", error);
+      console.log("user get has error ==>", error);
       res.status(500).send(error);
     });
 });
