@@ -32,40 +32,69 @@ router.post("/users/login", async (req, res) => {
     res.status(400).send(e);
   }
 });
-router.patch("/users/:id", async (req, res) => {
+
+router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age"];
-
-  const isValidOperation = updates.every((update) => {
-    return allowedUpdates.includes(update);
-  });
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
 
   if (!isValidOperation) {
     return res.status(400).send({ error: "Invalid updates!" });
   }
 
   try {
-    console.log("passs here");
-    const user = await User.findById(req.params.id);
-
     updates.forEach((update) => {
-      user[update] = req.body[update];
+      console.log("patch works", req.user);
+      req.user[update] = req.body[update];
     });
-    await user.save();
-    // user.name = "Something else";
-    // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    //   new: true,
-    //   runValidators: true,
-    // });
 
-    if (!user) {
-      return res.status(404).send();
-    }
-    res.send(user);
+    await req.user.save();
+
+    res.send(req.user);
+
+    // if (!user) {
+    //   return res.status(404).send();
+    // }
   } catch (error) {
     res.status(400).send(error);
   }
 });
+// router.patch("/users/:id", async (req, res) => {
+//   const updates = Object.keys(req.body);
+//   const allowedUpdates = ["name", "email", "password", "age"];
+
+//   const isValidOperation = updates.every((update) => {
+//     return allowedUpdates.includes(update);
+//   });
+
+//   if (!isValidOperation) {
+//     return res.status(400).send({ error: "Invalid updates!" });
+//   }
+
+//   try {
+//     console.log("passs here");
+//     const user = await User.findById(req.params.id);
+
+//     updates.forEach((update) => {
+//       user[update] = req.body[update];
+//     });
+//     await user.save();
+//     // user.name = "Something else";
+//     // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+//     //   new: true,
+//     //   runValidators: true,
+//     // });
+
+//     if (!user) {
+//       return res.status(404).send();
+//     }
+//     res.send(user);
+//   } catch (error) {
+//     res.status(400).send(error);
+//   }
+// });
 
 router.get("/users/me", auth, (req, res) => {
   User.find({})
