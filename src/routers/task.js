@@ -43,9 +43,20 @@ router.post("/tasks", auth,  async (req, res) => {
 // });
 
 router.get("/tasks", auth, async (req, res) => {
-  const _id = req.params.id;
+
+  const match = {}
+
+  if(req.query.completed) {
+    match.completed = req.query.completed === "true" ? "true": "false"
+  }
+
   try{
-    await req.user.populate('tasks').execPopulate()
+    await req.user.populate({
+      path: 'tasks',
+      match: {
+        completed: true
+      }
+    }).execPopulate()
     res.send(req.user.tasks)
   }catch(error) {
     res.status(500).send(error)
